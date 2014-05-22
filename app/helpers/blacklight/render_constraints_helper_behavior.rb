@@ -33,21 +33,30 @@ module Blacklight::RenderConstraintsHelperBehavior
   # @return [String]
   def render_constraints_query(localized_params = params)
     # So simple don't need a view template, we can just do it here.
-    if (!localized_params[:q].blank?)
-      label = 
-        if (localized_params[:search_field].blank? || (default_search_field && localized_params[:search_field] == default_search_field[:key] ) )
-          nil
-        else
-          label_for_search_field(localized_params[:search_field])
-        end
-    
-      render_constraint_element(label,
-            localized_params[:q], 
-            :classes => ["query"], 
-            :remove => url_for(localized_params.merge(:q=>nil, :action=>'index')))
-    else
-      "".html_safe
-    end
+    return "".html_safe if localized_params[:q].blank?
+
+    render_constraint_element(constraint_query_label(localized_params),
+          localized_params[:q],
+          :classes => ["query"],
+          :remove => url_for(localized_params.merge(:q=>nil, :action=>'index')))
+  end
+
+  ##
+  # Return a label for the currently selected search field.
+  # If no "search_field" or the default (e.g. "all_fields") is selected, then return nil
+  # Otherwise grab the label of the selected search field.
+  # @param [Hash] query parameters
+  # @return [String]
+  def constraint_query_label(localized_params = params)
+    label_for_search_field(localized_params[:search_field]) unless default_search_field?(localized_params[:search_field])
+  end
+
+  ##
+  # Is the search form using the default search field ("all_fields" by default)?
+  # @param [String] the currently selected search_field
+  # @return [Boolean]
+  def default_search_field?(selected_search_field)
+    selected_search_field.blank? || (default_search_field && selected_search_field == default_search_field[:key])
   end
 
   ##
