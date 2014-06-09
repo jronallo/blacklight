@@ -3,6 +3,8 @@ module Blacklight::UrlHelperBehavior
   extend Deprecation
   self.deprecation_horizon = 'blacklight 6.0'
 
+  include Blacklight::FacetsHelperBehavior
+
   ##
   # Extension point for downstream applications
   # to provide more interesting routing to
